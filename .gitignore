@@ -1,0 +1,5 @@
+*.o
+*.bin
+*.iso
+*.text
+iso/boot/kernel.bin
