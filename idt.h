@@ -1,3 +1,11 @@
+#ifndef IDT_H
+#define IDT_H
+
+#define PIC1_COMMAND 0x20
+#define PIC1_DATA 0x21
+#define PIC2_COMMAND 0xA0
+#define PIC2_DATA 0xA1
+
 #include <stdint.h>
 
 // Estructura de una entrada en la IDT
@@ -15,5 +23,11 @@ struct idt_ptr {
 } __attribute__((packed));
 
 // Declaracion de la IDT con 256 entradas
-struct idt_entry idt[256];
-struct idt_ptr idtp;
+extern struct idt_entry idt[256];
+extern struct idt_ptr idtp;
+
+void idt_set_gate(uint8_t num, uint32_t base, uint16_t sel, uint8_t flags);
+void idt_install();
+void pic_remap();
+
+#endif

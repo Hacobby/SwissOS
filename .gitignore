@@ -1,5 +1,6 @@
 *.o
 *.bin
 *.iso
+.vscode/
 iso/boot/kernel.bin
 usefulCommands.md
