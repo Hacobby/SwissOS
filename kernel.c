@@ -1,5 +1,6 @@
 #include <stdint.h>
 #include "drivers/video.c"
+#include "idt.h"
 
 void kernel_main(){
     // direccion de memoria de video
@@ -15,6 +16,9 @@ void kernel_main(){
     for (int i = 0; (msj[i] != '\0'); i++){
         terminalBuffer[i] = (uint16_t) msj[i] | (uint16_t) WHITE_ON_BLACK << 8;
     }
+
+    // Inicializar la IDT
+    idt_install();
 
     while(1){
         // Loop infinito para mantener el kernel corriendo

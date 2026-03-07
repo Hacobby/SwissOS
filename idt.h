@@ -6,7 +6,7 @@ struct idt_entry{
     uint16_t sel; //16 bits del selector de codigo en el GDT
     uint8_t  always0; //8 bits que requiere la cpu, siempre 0
     uint8_t  flags; // descriptores de interrupcion, tipo de puerta, privilegios, etc
-    uint16_t base_hi; //16 bits de la direccion de la rutina de interrupcion
+    uint16_t base_high; //16 bits de la direccion de la rutina de interrupcion
 } __attribute__((packed));
 
 struct idt_ptr {
