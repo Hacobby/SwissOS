@@ -1,5 +1,6 @@
 *.o
 *.bin
 *.iso
-*.text
+.vscode/
 iso/boot/kernel.bin
+usefulCommands.md
