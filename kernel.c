@@ -65,19 +65,24 @@ void kernel_main(){
     kprint(msj);
 
     // Inicializar la IDT
+    kprint("Instalando IDT...\n");
     idt_install();
+    kprint("IDT instalada correctamente.\n");
 
     // Remapear el PIC
+    kprint("Remapeando PIC...\n");
     pic_remap();
-    __asm__ __volatile__("sti"); // Habilitar interrupciones
-    kprint("IDT instalada y PIC remapeado. Interrupciones habilitadas.\n");
+    kprint("PIC remapeado.\n");
 
-    // Comentado para evitar que el sistema se detenga al generar una excepcion de division por cero. 
-    // Se puede descomentar para verificar que la IDT esta funcionando correctamente y que las excepciones se manejan adecuadamente.
-    //__asm__ __volatile__("int $0x3");
+    // Habilitar interrupciones
+    kprint("Habilitando interrupciones...\n");
+    __asm__ __volatile__("sti");
+    kprint("Interrupciones habilitadas.\n");
 
-    // Si este mensaje se mostro la IDT fallo.
-    // kprint("Bodrio operativo. Sistema en decadecia. -2/10. Queso podrido. Incluso windows es mejor.\n");
+    kprint("SwissOS> "); // Mostrar el prompt
+
+    // Pueden probar codigo aqui mientras se desarrolla la consola shell, por ejemplo:
+    // kprint("Hola, mundo!\n"); para imprimir un mensaje, o leer el estado de algun puerto de E/S con inb().
 
     while(1){
         // Loop infinito para mantener el kernel corriendo
@@ -122,6 +127,40 @@ char *exception_messages[] = {
     "Reserved",
 };
 
+char command_buffer[256]; // Buffer para almacenar el comando ingresado por el usuario
+int buffer_index = 0; // Numero de caracteres escritos
+
+// Funcion para comparar dos cadenas de texto
+int strcmp(char *s1, char *s2){
+    int i = 0;
+    while (s1[i] == s2[i]){
+        if (s1[i] == '\0') return 0; // Si llegamos al final de ambas cadenas y son iguales
+        i++;
+    }
+    return s1[i] - s2[i]; // Devolver la diferencia entre los caracteres
+}
+
+void execute_command(){
+    command_buffer[buffer_index] = '\0'; // Terminar la cadena con un null terminator
+
+    // Si no se escribio nada, no hacer nada
+    if (buffer_index == 0) return;
+
+    // Diccionario de comandos, se pueden añadir comandos aqui siguiendo el mismo formato
+    if (strcmp(command_buffer, "help") == 0){
+        kprint("Comandos disponibles:\nhelp\nping\necho\n");
+    }
+    else if (strcmp(command_buffer, "ping") == 0){
+        kprint("pong\n");
+    }
+    else if (strcmp(command_buffer, "echo ") == 0){
+        kprint("Eco.. eco..\n");
+    }
+    else {
+        kprint("Comando no reconocido. Escribe 'help' para ver los comandos disponibles.\n");
+    }
+}
+
 // Manejador de interrupciones
 void fault_handler(registers_t *registers){
     // Error critico de la CPU (0 al 31)
@@ -143,9 +182,26 @@ void fault_handler(registers_t *registers){
         
         if (scancode < 0x80){ // Solo procesar teclas presionadas, no liberadas
             char key = kbd_US[scancode];
-            if (key != 0){ // Si el scancode corresponde a un caracter imprimible
-                char str[2] = {key, '\0'}; // Convertir el caracter a una cadena de 1 caracter + null terminator
-                kprint(str);
+
+            if (key == '\b'){ // Retroceso
+                if (buffer_index > 0){
+                    buffer_index--; // Quitamos el ultimo caracter del buffer
+                    kprint("\b"); // Retroceder el cursor
+                }
+            }
+            else if (key == '\n'){ // Enter
+                kprint("\n"); // Nueva linea
+                execute_command(); // Ejecutar el comando ingresado
+                buffer_index = 0; // Reiniciar el buffer para el siguiente comando
+                kprint("SwissOS> "); // Mostrar el prompt
+            }
+            else if (key != 0){ // Caracter normal
+                if (buffer_index < 255){
+                    command_buffer[buffer_index] = key; // Agregar el caracter al buffer
+                    buffer_index++;
+                    char str[2] = {key, '\0'}; // Convertir el caracter a una cadena de 1 caracter + null terminator
+                    kprint(str);
+                }
             }
         }
 
