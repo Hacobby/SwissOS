@@ -1,5 +1,5 @@
 #include <stdint.h>
-#include "drivers/video.c"
+#include "drivers/video.h"
 #include "idt.h"
 #include "io.h"
 
@@ -57,9 +57,7 @@ void kernel_main(){
     char* msj = "Bienvenido a SwissOS\n";
 
     // Limpiar la pantalla llenando el buffer de video con espacios en blanco
-    for (int i = 0; i < MAX_COLS * MAX_ROWS; i++){
-        terminalBuffer[i] = (uint16_t) ' ' | (uint16_t) WHITE_ON_BLACK << 8;
-    }
+    clear_screen();
 
     // Escribir el mensaje en la pantalla 
     kprint(msj);
@@ -148,13 +146,16 @@ void execute_command(){
 
     // Diccionario de comandos, se pueden añadir comandos aqui siguiendo el mismo formato
     if (strcmp(command_buffer, "help") == 0){
-        kprint("Comandos disponibles:\nhelp\nping\necho\n");
+        kprint("Comandos disponibles:\nhelp\nping\necho\nclear\n");
     }
     else if (strcmp(command_buffer, "ping") == 0){
         kprint("pong\n");
     }
-    else if (strcmp(command_buffer, "echo ") == 0){
+    else if (strcmp(command_buffer, "echo") == 0){
         kprint("Eco.. eco..\n");
+    }
+    else if (strcmp(command_buffer, "clear") == 0){
+        clear_screen();
     }
     else {
         kprint("Comando no reconocido. Escribe 'help' para ver los comandos disponibles.\n");

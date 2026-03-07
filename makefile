@@ -4,8 +4,8 @@ LD = ld -m elf_i386
 
 all: SwissOS.iso
 
-kernel.bin: boot.o kernel.o idt.o exceptions.o io.o
-	$(LD) -T linker.ld -o kernel.bin boot.o kernel.o exceptions.o idt.o io.o
+kernel.bin: boot.o kernel.o idt.o exceptions.o io.o video.o
+	$(LD) -T linker.ld -o kernel.bin boot.o kernel.o exceptions.o idt.o io.o video.o
 
 boot.o: boot.s
 	$(AS) boot.s -o boot.o
@@ -21,6 +21,9 @@ idt.o: idt.c
 
 io.o: io.c
 	$(CC) -c io.c -o io.o -ffreestanding -O2 -Wall -mno-sse -mpreferred-stack-boundary=2
+
+video.o: drivers/video.c
+	$(CC) -c drivers/video.c -o video.o -ffreestanding -O2 -Wall -mno-sse -mpreferred-stack-boundary=2
 
 SwissOS: kernel.bin
 	mkdir -p iso/boot/grub
