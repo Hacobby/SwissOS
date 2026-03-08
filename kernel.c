@@ -1,7 +1,9 @@
 #include <stdint.h>
 #include "drivers/video.h"
+#include "modules/MemoryManager/mem_manager.h"
 #include "idt.h"
 #include "io.h"
+#include "multiboot.h"
 
 // Estructura para guardar el estado de los registros durante una interrupcion
 typedef struct {
@@ -51,16 +53,27 @@ const char kbd_US[128] = {
     0,  /* All other keys are undefined */
 };
 
-void kernel_main(){
-    // direccion de memoria de video
-    volatile uint16_t* terminalBuffer = (volatile uint16_t*) VIDEO_ADDRESS;
-    char* msj = "Bienvenido a SwissOS\n";
+uint32_t total_memory_mb = 0; // Variable global para almacenar la memoria total detectada por el kernel
 
+void kernel_main(uint32_t magic, multiboot_info_t* mbd){  
     // Limpiar la pantalla llenando el buffer de video con espacios en blanco
     clear_screen();
 
+    // Verificar GRUB
+    kprint("Verificando GRUB...\n");
+    if (magic != 0x2BADB002){
+        kprint("Error: GRUB no ha cargado el kernel correctamente.\n");
+        while(1){ __asm__ __volatile__("cli; hlt"); } // Halt para evitar que el sistema siga corriendo
+    }
+    kprint("GRUB verificado correctamente.\n");
+
+    // Almacenar la memoria total detectada por el kernel
+    if (mbd->flags & 0x1){ // Verificar si el bit 0 del campo flags esta seteado, lo que indica que los campos mem_lower y mem_upper son validos
+        total_memory_mb = (mbd->mem_lower + mbd->mem_upper) / 1024; // Calcular la memoria total en MB sumando la memoria baja y alta y dividiendo por 1024 para convertir de KB a MB
+    }
+
     // Escribir el mensaje en la pantalla 
-    kprint(msj);
+    kprint("Bienvenido a SwissOS\n");
 
     // Inicializar la IDT
     kprint("Instalando IDT...\n");
@@ -156,6 +169,9 @@ void execute_command(){
     }
     else if (strcmp(command_buffer, "clear") == 0){
         clear_screen();
+    }
+    else if (strcmp(command_buffer, "mem") == 0){
+        mem(total_memory_mb); // Llamar a la funcion de memoria y pasar la variable global para mostrar la memoria total
     }
     else {
         kprint("Comando no reconocido. Escribe 'help' para ver los comandos disponibles.\n");

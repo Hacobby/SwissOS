@@ -21,6 +21,8 @@ global _start
 
 _start:
     mov esp, stack_space
+    push ebx
+    push eax
     call kernel_main
     hlt
 
