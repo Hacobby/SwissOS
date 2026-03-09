@@ -33,8 +33,16 @@ SwissOS: kernel.bin
 	mv kernel.bin iso/boot/
 	grub2-mkrescue -o SwissOS.iso iso
 
+SwissOS2: kernel.bin
+	mkdir -p iso/boot/grub
+	mv kernel.bin iso/boot/
+	grub-mkrescue -o SwissOS.iso iso
+
 clean:
 	rm -rf *.o kernel.bin SwissOS.iso iso/boot/kernel.bin
 
 run: SwissOS
+	qemu-system-i386 -cdrom SwissOS.iso -d int -no-reboot -m 512M
+
+run2: SwissOS2
 	qemu-system-i386 -cdrom SwissOS.iso -d int -no-reboot -m 512M
