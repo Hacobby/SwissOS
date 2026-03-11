@@ -22,7 +22,7 @@ sudo apt install gcc nasm make qemu-system-x86 grub-tools grub-tools-extra grub-
 
 #### Flatpak
 
-Si instalaron Visual Studio Code por medio de flatpak (usualmente la tienda de apps) no usen la terminal integrada de vsCode, flatpak aisla las aplicaciones del resto del sistema por temas de seguridad asi que no sera capaz de leer los paquetes necesarios para compilar y testear. En cambio, pueden ir a la carpeta del repositorio (SwissOS), darle click derecho y darle a la opcion "Abrir terminal aqui", el resto se mantiene igual 'make clean' 'make run'
+Si instalaron Visual Studio Code por medio de flatpak (usualmente la tienda de apps) no usen la terminal integrada de vsCode, flatpak aisla las aplicaciones del resto del sistema por temas de seguridad asi que no sera capaz de leer los paquetes necesarios para compilar y testear. En cambio, pueden ir a la carpeta del repositorio (SwissOS), darle click derecho y darle a la opcion "Abrir terminal aqui", el resto se mantiene igual `make clean` `make run`
 
 ### Ejemplo
 Hipoteticamente creamos un archivo moduloX.c, para que el compilador reconozca e incluya moduloX.c en la iso deben añadirlo a makefile asi:  
@@ -41,10 +41,10 @@ moduloX.o: moduloX.c
 #### Makefile
 
 Actualmente el archivo makefile del proyecto cuenta con 3 comandos de utilidad:
-    - `make run`: Se usa para compilar todo el codigo, crear el archivo iso y abrir la maquina virtual en qemu para testing.
-    - `make clean`: Usenlo despues de cada cambio en el codigo para limpiar los archivos compilados y la anterior iso generada, de esta forma se evitan errores a la hora de testear los nuevos cambioos.
-    - `make SwissOS`: Este comando lo pueden usar para compilar y crear la iso unicamente, en caso de que solo necesiten la iso para algo.
-    - `make run2`: Lo mismo que `make run`, pero para debian.
+- `make run`: Se usa para compilar todo el codigo, crear el archivo iso y abrir la maquina virtual en qemu para testing.  
+- `make clean`: Usenlo despues de cada cambio en el codigo para limpiar los archivos compilados y la anterior iso generada, de esta forma se evitan errores a la hora de testear los nuevos cambios.  
+- `make SwissOS`: Este comando lo pueden usar para compilar y crear la iso unicamente, en caso de que solo necesiten la iso para algo.  
+- `make run2`: Lo mismo que `make run`, pero para debian.
 
 # Windows
 
