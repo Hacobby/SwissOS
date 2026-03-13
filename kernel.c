@@ -4,6 +4,7 @@
 #include "idt.h"
 #include "io.h"
 #include "multiboot.h"
+#include "entryAndExit/entryAndExit_manager.h"
 
 // Estructura para guardar el estado de los registros durante una interrupcion
 typedef struct {
@@ -92,6 +93,17 @@ void kernel_main(uint32_t magic, multiboot_info_t* mbd){
 
     kprint("SwissOS> "); // Mostrar el prompt
 
+    //Inializar el gestor de entrada y salida
+    iniciar_gestor();
+    //Registrar dispositivo
+    registrar_dispositivo("teclado", "entrada");
+    registrar_dispositivo("Mouse","entrada");
+    registrar_dispositivo("Monitor","Salida");
+    registrar_dispositivo("Vocina","Salida");
+
+    establecer_principal(0);
+    establecer_principal(2);
+
     // Pueden probar codigo aqui mientras se desarrolla la consola shell, por ejemplo:
     // kprint("Hola, mundo!\n"); para imprimir un mensaje, o leer el estado de algun puerto de E/S con inb().
 
@@ -159,7 +171,7 @@ void execute_command(){
 
     // Diccionario de comandos, se pueden añadir comandos aqui siguiendo el mismo formato
     if (strcmp(command_buffer, "help") == 0){
-        kprint("Comandos disponibles:\nhelp\nping\necho\nclear\n");
+        kprint("Comandos disponibles:\nhelp\nping\necho\nclear\ndevices\nmenu");
     }
     else if (strcmp(command_buffer, "ping") == 0){
         kprint("pong\n");
@@ -172,6 +184,12 @@ void execute_command(){
     }
     else if (strcmp(command_buffer, "mem") == 0){
         mem(total_memory_mb); // Llamar a la funcion de memoria y pasar la variable global para mostrar la memoria total
+    }
+    else if(strcmp(command_buffer, "devices") ==0){
+        mostrar_dispositivo();
+    }
+    else if(strcmp(command_buffer, "menu") == 0){
+        mostar_menu();
     }
     else {
         kprint("Comando no reconocido. Escribe 'help' para ver los comandos disponibles.\n");

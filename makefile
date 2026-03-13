@@ -4,8 +4,8 @@ LD = ld -m elf_i386
 
 all: SwissOS.iso
 
-kernel.bin: boot.o kernel.o idt.o exceptions.o io.o video.o mem_manager.o
-	$(LD) -T linker.ld -o kernel.bin boot.o kernel.o exceptions.o idt.o io.o video.o mem_manager.o
+kernel.bin: boot.o kernel.o idt.o exceptions.o io.o video.o mem_manager.o entryAndExit_manager.o
+	$(LD) -T linker.ld -o kernel.bin boot.o kernel.o exceptions.o idt.o io.o video.o mem_manager.o entryAndExit_manager.o
 
 boot.o: boot.s
 	$(AS) boot.s -o boot.o
@@ -28,6 +28,8 @@ video.o: drivers/video.c
 mem_manager.o: modules/MemoryManager/mem_manager.c
 	$(CC) -c modules/MemoryManager/mem_manager.c -o mem_manager.o -ffreestanding -O2 -Wall -mno-sse -mpreferred-stack-boundary=2 -fno-stack-protector
 
+entryAndExit_manager.o: entryAndExit/entryAndExit_manager.c
+	$(CC) -c entryAndExit/entryAndExit_manager.c -o entryAndExit_manager.o -ffreestanding -O2 -Wall -mno-sse -mpreferred-stack-boundary=2 -fno-stack-protector
 SwissOS: kernel.bin
 	mkdir -p iso/boot/grub
 	mv kernel.bin iso/boot/
