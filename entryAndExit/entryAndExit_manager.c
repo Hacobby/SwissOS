@@ -62,39 +62,56 @@ void registrar_dispositivo(char* nombre, char* tipo){
 void activar_dispositivo(int id){
 
     //verifica que el ID exista
-    if(id < total_dispositivos){
-
-        //Cambia el estado del a activo
-        dispositivo[id].activo = 1;
-
+    if(id < 0 || id >= total_dispositivos){
+        kprint("ID invalido\n");
+        return;
     }
+
+   // Verifica si ya está activo
+    if(dispositivo[id].activo == 1){
+        kprint("El dispositivo ya esta activo\n");
+        return;
+    }
+
+    //cambia a activo
+    dispositivo[id].activo = 1;
+    kprint("Dispositivo activado\n");
 }
 
 //Funcion para desactivar un dispositivo
 void desactivar_dispositivo(int id){
 
-    //verifica que el ID exista
-    if(id < total_dispositivos){
-
-        //no permite desactivar el dispositivo principal
-        if(dispositivo[id].principal){
-            kprint("No se puede desactivar un dispositivo principalm \n");
-            return;
-        }
-
-        //Cambia el estado a desactivado
-        dispositivo[id].activo = 0;
+    //verifa que el ID no sea negativo ni mayor a los id registrados
+    if(id < 0 || id >= total_dispositivos){
+        kprint("ID invalido\n");
+        return;
     }
+
+    //verifca si el dispositivo es principal
+    if(dispositivo[id].principal == 1){
+        kprint("No se puede desactivar un dispositivo principal\n");
+        return;
+    }
+
+    //verifica que ya este apagado 
+    if(dispositivo[id].activo == 0){
+        kprint("El dispositivo ya esta desactivado\n");
+        return;
+    }
+
+    //activa el dispositivo
+    dispositivo[id].activo = 0;
+    kprint("Dispositivo desactivado\n");
 }
 
 //Funcion para establecer dispositivo principal
 void establecer_principal(int id){
 
     //verifica que el dispositivo exista 
-    if(id >= total_dispositivos){  
+    if(id < 0 || id >= total_dispositivos){
+        kprint("ID invalido\n");
         return;
     }
-
         
         for(int i = 0; i < total_dispositivos; i++){
 
@@ -108,6 +125,7 @@ void establecer_principal(int id){
 
         //Se establece como nuevo estado de principal
         dispositivo[id].principal = 1;
+        //kprint("Dispositivo establecido como principal\n");
     }
 
 
@@ -120,8 +138,12 @@ void mostrar_dispositivo(){
     for(int i = 0; i < total_dispositivos; i++){
 
         // ID
-        //kprint(dispositivo[i].id);
-        //kprint("   ");
+        char id[2];
+        id[0] = '0' + (i + 1);
+        id[1] = '\0';
+
+        kprint(id);
+        kprint("    ");
 
         // Nombre
         kprint(dispositivo[i].nombre);
@@ -151,10 +173,10 @@ void mostrar_dispositivo(){
 void mostar_menu(){
 
     kprint("MENU DE OPCIONES\n");
-    kprint("1. Mostrar dispositivos\n");
-    kprint("2. Activar dispositivo\n");
-    kprint("3. Desactivar dispositivo\n");
-    kprint("4. Establecer principal\n");
+    kprint("devices --> Mostrar dispositivos\n");
+    kprint("act --> Activar dispositivo\n");
+    kprint("des --> Desactivar dispositivo\n");
+    kprint("prin --> Establecer principal\n");
 
 
 }

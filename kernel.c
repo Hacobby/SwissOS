@@ -164,14 +164,14 @@ int strcmp(char *s1, char *s2){
 }
 
 void execute_command(){
-    command_buffer[buffer_index] = '\0'; // Terminar la cadena con un null terminator
+    command_buffer[buffer_index] = '\0';// Terminar la cadena con un null terminator
+
 
     // Si no se escribio nada, no hacer nada
     if (buffer_index == 0) return;
-
     // Diccionario de comandos, se pueden añadir comandos aqui siguiendo el mismo formato
     if (strcmp(command_buffer, "help") == 0){
-        kprint("Comandos disponibles:\nhelp\nping\necho\nclear\ndevices\nmenu");
+        kprint("Comandos disponibles:\nhelp\nping\necho\nclear\ndevices\nmenu\nact\ndes\npri");
     }
     else if (strcmp(command_buffer, "ping") == 0){
         kprint("pong\n");
@@ -191,9 +191,53 @@ void execute_command(){
     else if(strcmp(command_buffer, "menu") == 0){
         mostar_menu();
     }
+    else if(strcmp(command_buffer,"devices") == 0){
+        mostrar_dispositivo();
+    }
+    else if(command_buffer[0]=='a' && command_buffer[1]=='c' && command_buffer[2]=='t'){
+    if(command_buffer[3] != ' '){
+        kprint("comando correcto: act <ID>\n");
+    }
+    else if(command_buffer[4] < '0' || command_buffer[4] > '9'){
+        kprint("ID invalido\n");
+    }
+    else{
+        int id = command_buffer[4] - '0';
+        if(id <= 0 || id > total_dispositivos){
+            kprint("ID fuera de rango\n");
+        }
+        else{
+            activar_dispositivo(id-1);
+            }
+        }
+    }
+    else if(command_buffer[0]=='d' && command_buffer[1]=='e' && command_buffer[2]=='s'){
+    if(command_buffer[3] != ' '){
+        kprint("comando correcto: des <ID>\n");
+    }
+    else{
+        int id = command_buffer[4] - '0';
+        if(id <= 0 || id > total_dispositivos){
+            kprint("ID fuera de rango\n");
+        }
+        else{
+            desactivar_dispositivo(id-1);
+        }
+    }
+
+    }
+    else if(command_buffer[0]=='p' && command_buffer[1]=='r' && command_buffer[2]=='i'){ 
+    if(command_buffer[3] != ' ' || command_buffer[4] < '0' || command_buffer[4] > '9'){
+        kprint("Uso: pri <ID>\n");
+        return;
+    }
+    int id = command_buffer[4] - '0';
+    establecer_principal(id-1);
+    }
     else {
         kprint("Comando no reconocido. Escribe 'help' para ver los comandos disponibles.\n");
     }
+    buffer_index = 0;
 }
 
 // Manejador de interrupciones

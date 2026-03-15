@@ -4,6 +4,7 @@
 //cantidad maxima de dispositivo que el sistema puede manejar
 #define MAX_DISPOSITVOS 20
 
+
 //La estructura que representa un dispositivo de entrada y salida
 typedef struct{
     int id;
@@ -12,6 +13,9 @@ typedef struct{
     int activo;
     int principal;
 } Dispositivo;
+
+
+extern int total_dispositivos;
 
 //Inicializar el gestor
 void iniciar_gestor();
