@@ -171,7 +171,7 @@ void execute_command(){
     if (buffer_index == 0) return;
     // Diccionario de comandos, se pueden añadir comandos aqui siguiendo el mismo formato
     if (strcmp(command_buffer, "help") == 0){
-        kprint("Comandos disponibles:\nhelp\nping\necho\nclear\ndevices\nmenu\nact\ndes\npri");
+        kprint("Comandos disponibles:\nhelp\nping\necho\nclear\ndevices\nmenu\nact\ndes\npri\n");
     }
     else if (strcmp(command_buffer, "ping") == 0){
         kprint("pong\n");
